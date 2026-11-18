@@ -1,0 +1,12 @@
+/// Safely divides two numeric expressions, returning a fallback alternative when the denominator is zero.
+function SafeDivide =
+		(Numerator: double, Denominator: double, Alt: double = 0.0) =>
+			DIVIDE(Numerator, Denominator, Alt)
+	lineageTag: fn-safedivide-001
+
+/// Formats a monetary number with a chosen currency symbol prefix.
+function FormatCurrency =
+		(Amount: double, Symbol: string = "$") =>
+			Symbol & " " & FORMAT(Amount, "#,##0.00")
+	lineageTag: fn-formatcurrency-002
+

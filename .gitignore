@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+.vscode/
+
+# Logs and temporary files
+*.log
+temp_*
+*.tmp
+*.abf
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# PBI sample data
+**/.pbi/
+**/TMDLScripts/
+
+

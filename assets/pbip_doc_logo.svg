@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <!-- Sfondo trasparente -->
+
+  <g stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- ================= LIBRO 1 (Basso) ================= -->
+    <g transform="translate(18, 74)">
+      <path d="M 8,12 L 42,-9 V 43 L 0" fill="none" />
+      <path d="M 8,12 C 2,16 12,24 22,19 L 41,7 V 58 L 22,71 C 12,76 2,68 8,64 Z" fill="none" />
+      <line x1="22" y1="19" x2="22" y2="71" />
+    </g>
+
+    <!-- ================= LIBRO 2 (Medio) ================= -->
+    <g transform="translate(52, 48)">
+      <path d="M 8,12 L 42,-9 V 69 L 0" fill="none" />
+      <path d="M 8,12 C 2,16 12,24 22,19 L 41,7 V 85 L 22,97 C 12,102 2,94 8,90 Z" fill="none" />
+      <line x1="22" y1="19" x2="22" y2="97" />
+    </g>
+
+    <!-- ================= LIBRO 3 (Alto) ================= -->
+    <g transform="translate(86, 22)">
+      <path d="M 8,12 L 42,-9 V 5 L 0" fill="none" />
+      <path d="M 8,12 C 2,16 12,24 22,19 L 54,-1 V 103 L 22,123 C 12,128 2,120 8,116 Z" fill="none" />
+      <line x1="22" y1="19" x2="22" y2="123" />
+      
+      <!-- Parentesi graffe con margine e isometria -->
+      <g fill="none" stroke="#FFFFFF" stroke-width="2" transform="translate(38, 61) scale(0.7) skewY(-31)">
+        <!-- Graffa sinistra { -->
+        <path d="M -4,-14 C -8,-14 -10,-12 -10,-8 C -10,-4 -12,-2 -14,0 C -12,2 -10,4 -10,8 C -10,12 -8,14 -4,14" />
+        <!-- Graffa destra } -->
+        <path d="M 4,-14 C 8,-14 10,-12 10,-8 C 10,-4 12,-2 14,0 C 12,2 10,4 10,8 C 10,12 8,14 4,14" />
+      </g>
+      
+      <!-- Nastrino Bianco -->
+      <polygon points="33.2,12 41.2,7 41.2,34 37.2,30 33.2,37" fill="#FFFFFF" stroke="none" />
+      <line x1="22" y1="19" x2="54" y2="-1" />
+    </g>
+  </g>
+</svg>

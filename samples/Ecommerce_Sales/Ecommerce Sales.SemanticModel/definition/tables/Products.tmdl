@@ -1,0 +1,60 @@
+/// Product catalog hierarchy, categories, and standard pricing.
+table Products
+	lineageTag: tbl-products-001
+
+	column ProductID
+		dataType: int64
+		lineageTag: col-prodid-pk-001
+		summarizeBy: none
+		sourceColumn: ProductID
+
+	column ProductName
+		dataType: string
+		lineageTag: col-prodname-001
+		summarizeBy: none
+		sourceColumn: ProductName
+
+	column Category
+		dataType: string
+		lineageTag: col-category-001
+		summarizeBy: none
+		sourceColumn: Category
+
+	column SubCategory
+		dataType: string
+		lineageTag: col-subcategory-001
+		summarizeBy: none
+		sourceColumn: SubCategory
+
+	column StandardCost
+		dataType: decimal
+		formatString: \$#,##0.00
+		lineageTag: col-standardcost-001
+		summarizeBy: average
+		sourceColumn: StandardCost
+
+	hierarchy 'Product Catalog'
+		lineageTag: h-prodcat-001
+
+		level Category
+			lineageTag: h-lvl-cat
+			column: Category
+
+		level SubCategory
+			lineageTag: h-lvl-subcat
+			column: SubCategory
+
+		level Product
+			lineageTag: h-lvl-prod
+			column: ProductName
+
+	partition Products-Partition = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("dw.company.internal", "EcommerceDW"),
+				    Products_Table = Source{[Schema="dbo",Item="Dim_Products"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(Products_Table,{{"ProductID", Int64.Type}, {"ProductName", type text}, {"Category", type text}, {"SubCategory", type text}, {"StandardCost", Currency.Type}})
+				in
+				    #"Changed Type"
+

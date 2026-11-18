@@ -1,0 +1,32 @@
+/// Sales acquisition and fulfillment channels (e.g. Web, Mobile App, Marketplace).
+table Channels
+	lineageTag: tbl-channels-001
+
+	column ChannelID
+		dataType: int64
+		lineageTag: col-chanid-pk-001
+		summarizeBy: none
+		sourceColumn: ChannelID
+
+	column ChannelName
+		dataType: string
+		lineageTag: col-channame-001
+		summarizeBy: none
+		sourceColumn: ChannelName
+
+	column ChannelType
+		dataType: string
+		lineageTag: col-chantype-001
+		summarizeBy: none
+		sourceColumn: ChannelType
+
+	partition Channels-Partition = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("dw.company.internal", "EcommerceDW"),
+				    Channels_Table = Source{[Schema="dbo",Item="Dim_Channels"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(Channels_Table,{{"ChannelID", Int64.Type}, {"ChannelName", type text}, {"ChannelType", type text}})
+				in
+				    #"Changed Type"
+

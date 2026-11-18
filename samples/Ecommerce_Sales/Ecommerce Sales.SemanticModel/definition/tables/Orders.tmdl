@@ -1,0 +1,119 @@
+/// Fact table containing all e-commerce order transactions and line-item details.
+table Orders
+	lineageTag: tbl-orders-001
+
+	/// Total number of distinct orders placed.
+	measure 'Total Orders' = COUNTROWS(Orders)
+		formatString: #,##0
+		lineageTag: m-totalorders-001
+
+	/// Total units of products sold across all orders.
+	measure 'Total Quantity' = SUM(Orders[Quantity])
+		formatString: #,##0
+		lineageTag: m-totalqty-001
+
+	/// Net sales revenue generated after item discounts.
+	measure 'Total Revenue' = SUMX(Orders, (Orders[Quantity] * Orders[UnitPrice]) - Orders[DiscountAmount])
+		formatString: \$#,##0.00
+		lineageTag: m-totalrev-001
+
+	/// Total production and procurement costs for all items sold.
+	measure 'Total Cost' = SUMX(Orders, Orders[Quantity] * Orders[CostAmount])
+		formatString: \$#,##0.00
+		lineageTag: m-totalcost-001
+
+	/// Gross profit generated (Total Revenue minus Total Cost).
+	measure 'Gross Margin' = [Total Revenue] - [Total Cost]
+		formatString: \$#,##0.00
+		lineageTag: m-grossmargin-001
+
+	/// Percentage of revenue retained as gross profit, utilizing SafeDivide UDF.
+	measure 'Gross Margin %' = SafeDivide([Gross Margin], [Total Revenue])
+		formatString: 0.0%
+		lineageTag: m-grossmarginpct-001
+
+	/// Average dollar value per transaction.
+	measure 'Average Order Value' = SafeDivide([Total Revenue], [Total Orders], 0.0)
+		formatString: \$#,##0.00
+		lineageTag: m-aov-001
+
+	/// Year-over-year percentage revenue growth.
+	measure 'Revenue YoY Growth %' =
+			VAR CurrentRev = [Total Revenue]
+			VAR PriorRev = CALCULATE([Total Revenue], SAMEPERIODLASTYEAR('Date'[Date]))
+			RETURN SafeDivide(CurrentRev - PriorRev, PriorRev, 0)
+		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: m-yoygrowth-001
+
+	column OrderID
+		dataType: int64
+		lineageTag: col-orderid-001
+		summarizeBy: count
+		sourceColumn: OrderID
+
+	column OrderDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: col-orderdate-001
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+	column CustomerID
+		dataType: int64
+		isHidden
+		lineageTag: col-custid-fk-001
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+	column ProductID
+		dataType: int64
+		isHidden
+		lineageTag: col-prodid-fk-001
+		summarizeBy: none
+		sourceColumn: ProductID
+
+	column ChannelID
+		dataType: int64
+		isHidden
+		lineageTag: col-chanid-fk-001
+		summarizeBy: none
+		sourceColumn: ChannelID
+
+	column Quantity
+		dataType: int64
+		lineageTag: col-quantity-001
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+	column UnitPrice
+		dataType: decimal
+		formatString: \$#,##0.00
+		lineageTag: col-unitprice-001
+		summarizeBy: average
+		sourceColumn: UnitPrice
+
+	column DiscountAmount
+		dataType: decimal
+		formatString: \$#,##0.00
+		lineageTag: col-discount-001
+		summarizeBy: sum
+		sourceColumn: DiscountAmount
+
+	column CostAmount
+		dataType: decimal
+		formatString: \$#,##0.00
+		lineageTag: col-cost-001
+		summarizeBy: sum
+		sourceColumn: CostAmount
+
+	partition Orders-Partition = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("dw.company.internal", "EcommerceDW"),
+				    Orders_Table = Source{[Schema="dbo",Item="Fact_Orders"]}[Data],
+				    #"Filtered Rows" = Table.SelectRows(Orders_Table, each [Quantity] > 0),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"OrderID", Int64.Type}, {"OrderDate", type datetime}, {"CustomerID", Int64.Type}, {"ProductID", Int64.Type}, {"ChannelID", Int64.Type}, {"Quantity", Int64.Type}, {"UnitPrice", Currency.Type}, {"DiscountAmount", Currency.Type}, {"CostAmount", Currency.Type}})
+				in
+				    #"Changed Type"
+

@@ -1,0 +1,73 @@
+/// Standard Gregorian calendar date dimension.
+table Date
+	lineageTag: tbl-date-001
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: col-date-pk-001
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Year
+		dataType: int64
+		lineageTag: col-year-001
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Quarter
+		dataType: string
+		lineageTag: col-quarter-001
+		summarizeBy: none
+		sourceColumn: Quarter
+
+	column Month
+		dataType: int64
+		lineageTag: col-monthnum-001
+		summarizeBy: none
+		sourceColumn: Month
+
+	column MonthName
+		dataType: string
+		lineageTag: col-monthname-001
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+	column DayOfWeek
+		dataType: string
+		lineageTag: col-dayofweek-001
+		summarizeBy: none
+		sourceColumn: DayOfWeek
+
+	hierarchy 'Calendar Hierarchy'
+		lineageTag: h-calhierarchy-001
+
+		level Year
+			lineageTag: h-lvl-year
+			column: Year
+
+		level Quarter
+			lineageTag: h-lvl-quarter
+			column: Quarter
+
+		level Month
+			lineageTag: h-lvl-month
+			column: MonthName
+
+		level Date
+			lineageTag: h-lvl-date
+			column: Date
+
+	partition Date-Partition = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("dw.company.internal", "EcommerceDW"),
+				    Date_Table = Source{[Schema="dbo",Item="Dim_Date"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(Date_Table,{{"Date", type datetime}, {"Year", Int64.Type}, {"Quarter", type text}, {"Month", Int64.Type}, {"MonthName", type text}, {"DayOfWeek", type text}})
+				in
+				    #"Changed Type"
+

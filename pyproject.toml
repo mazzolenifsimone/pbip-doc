@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pbip-doc"
+dynamic = ["version"]
+description = "Pure Python documentation generator and metadata extractor for Power BI Project (PBIP) and Fabric semantic models."
+readme = "README.md"
+authors = [
+    { name = "Simone Mazzoleni", email = "mazzolenif.simone@gmail.com" }
+]
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Database",
+    "Topic :: Documentation",
+    "Topic :: Software Development :: Documentation",
+]
+keywords = ["power-bi", "pbip", "microsoft-fabric", "tmdl", "tmsl", "dax", "power-query", "documentation", "lineage", "rag"]
+requires-python = ">=3.8"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/mazzolenifsimone/pbip-doc"
+Repository = "https://github.com/mazzolenifsimone/pbip-doc"
+Issues = "https://github.com/mazzolenifsimone/pbip-doc/issues"
+Documentation = "https://github.com/mazzolenifsimone/pbip-doc#readme"
+
+[project.scripts]
+pbip-doc = "pbip_doc.cli:main"
+pbipdoc = "pbip_doc.cli:main"
+pbip-doc-gen = "pbip_doc.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "pbip_doc.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pbip_doc*"]

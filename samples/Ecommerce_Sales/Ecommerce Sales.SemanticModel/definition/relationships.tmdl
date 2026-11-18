@@ -1,0 +1,16 @@
+relationship rel_orders_customers
+	fromColumn: Orders.CustomerID
+	toColumn: Customers.CustomerID
+
+relationship rel_orders_products
+	fromColumn: Orders.ProductID
+	toColumn: Products.ProductID
+
+relationship rel_orders_date
+	fromColumn: Orders.OrderDate
+	toColumn: Date.Date
+
+relationship rel_orders_channels
+	fromColumn: Orders.ChannelID
+	toColumn: Channels.ChannelID
+

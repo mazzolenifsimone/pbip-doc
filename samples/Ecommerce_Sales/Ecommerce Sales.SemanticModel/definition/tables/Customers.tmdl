@@ -1,0 +1,70 @@
+/// Customer demographics, segmentation, and geography.
+table Customers
+	lineageTag: tbl-customers-001
+
+	/// Count of unique customers who placed at least one order.
+	measure 'Active Customers' = DISTINCTCOUNT(Orders[CustomerID])
+		formatString: #,##0
+		lineageTag: m-activecust-001
+
+	/// Average revenue generated per active customer.
+	measure 'Revenue per Customer' = SafeDivide([Total Revenue], [Active Customers])
+		formatString: \$#,##0.00
+		lineageTag: m-revpercust-001
+
+	column CustomerID
+		dataType: int64
+		lineageTag: col-custid-pk-001
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+	column CustomerName
+		dataType: string
+		lineageTag: col-custname-001
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+	column CustomerSegment
+		dataType: string
+		lineageTag: col-custseg-001
+		summarizeBy: none
+		sourceColumn: CustomerSegment
+
+	column Country
+		dataType: string
+		lineageTag: col-country-001
+		summarizeBy: none
+		sourceColumn: Country
+
+	column City
+		dataType: string
+		lineageTag: col-city-001
+		summarizeBy: none
+		sourceColumn: City
+
+	hierarchy 'Customer Geography'
+		lineageTag: h-custgeo-001
+
+		level Country
+			lineageTag: h-lvl-country
+			column: Country
+
+		level City
+			lineageTag: h-lvl-city
+			column: City
+
+		level Customer
+			lineageTag: h-lvl-customer
+			column: CustomerName
+
+	partition Customers-Partition = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("dw.company.internal", "EcommerceDW"),
+				    Customers_Table = Source{[Schema="dbo",Item="Dim_Customers"]}[Data],
+				    #"Cleaned Text" = Table.TransformColumns(Customers_Table,{{"CustomerName", Text.Trim, type text}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Cleaned Text",{{"CustomerID", Int64.Type}, {"CustomerName", type text}, {"CustomerSegment", type text}, {"Country", type text}, {"City", type text}})
+				in
+				    #"Changed Type"
+
